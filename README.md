@@ -1,4 +1,4 @@
-# ONSDB SQL Queries
+# Nedap OnsDB - SQL Queries
 
 Deze repository bevat **herbruikbare SQL-queries voor Nedap OnsDB**, gedeeld door en voor zorgorganisaties die met Nedap ONS werken.
 
@@ -16,7 +16,10 @@ templates/      # Query-template voor nieuwe bijdragen
 
 Bijdragen zijn welkom 🎉
 
-Nieuwe queries en wijzigingen worden altijd gedaan via een Pull Request (PR). Niet bekend met `git`? Dit kan volledig via de GitHub-browserinterface.
+Nieuwe queries en wijzigingen worden altijd gedaan via een Pull Request (PR). Dit zorgt ervoor dat wijzigingen even kunnen worden bekeken voordat ze worden toegevoegd, en voorkomt dat iemand per ongeluk iets kapot maakt.
+
+Niet bekend met `git`? GitHub begeleidt dit automatisch,
+ook als je alleen in de browser werkt. Dat werkt zo:
 
 **Werkwijze**
 1. Ga naar de map `queries/`
