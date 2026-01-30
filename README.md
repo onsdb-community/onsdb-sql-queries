@@ -16,10 +16,20 @@ templates/      # Query-template voor nieuwe bijdragen
 
 Bijdragen zijn welkom 🎉
 
-* Gebruik bij voorkeur het template in `templates/query-template.sql`
-* Houd de documentatie **kort en functioneel**
-* Voeg **geen cliëntdata, exports of screenshots** toe
-* Gebruik placeholders waar nodig
+Nieuwe queries en wijzigingen worden altijd gedaan via een Pull Request (PR). Niet bekend met `git`? Dit kan volledig via de GitHub-browserinterface.
+
+**Werkwijze**
+1. Ga naar de map `queries/`
+2. Klik op **Add file → Create new file** (nieuwe query)  
+   of open een bestaande query en klik op ✏️ **Edit**
+3. Gebruik bij voorkeur het template in `templates/query-template.sql`
+4. Klik op **Propose changes** en maak de Pull Request aan
+
+**Richtlijnen**
+- Houd de documentatie **kort en functioneel**
+- Voeg **geen cliëntdata, exports of screenshots** toe
+- Gebruik placeholders waar nodig
+
 
 ## Disclaimer
 
