@@ -4,7 +4,6 @@ Deze repository bevat **herbruikbare SQL-queries voor Nedap OnsDB**, gedeeld doo
 
 Het doel is om kennis te delen en dubbel werk te voorkomen.
 
----
 
 ## Structuur
 
@@ -12,8 +11,6 @@ Het doel is om kennis te delen en dubbel werk te voorkomen.
 queries/        # De SQL-querybibliotheek
 templates/      # Query-template voor nieuwe bijdragen
 ```
-
----
 
 ## Bijdragen
 
@@ -24,19 +21,15 @@ Bijdragen zijn welkom 🎉
 * Voeg **geen cliëntdata, exports of screenshots** toe
 * Gebruik placeholders waar nodig
 
----
-
 ## Disclaimer
 
 * Iedere organisatie is zelf verantwoordelijk voor gebruik en impact
 
----
 
 ## Licentie
 
 MIT License (zie `LICENSE`).
 
----
 
 ## Community
 
