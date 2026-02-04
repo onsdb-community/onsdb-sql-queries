@@ -50,7 +50,7 @@ Deze repository is een community-initiatief en staat los van Nedap.
 
 Vragen, ideeën of verzoeken?
 
-* Open een issue
-* Start een discussion
+* Open een issue binnen deze repository en start een discussie.
+* Of stuur een e-mail naar Chantal van Son (c.vanson@odion.nl).
 
 Samen komen we verder 💙
