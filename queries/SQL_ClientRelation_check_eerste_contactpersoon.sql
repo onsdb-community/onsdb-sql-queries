@@ -1,21 +1,44 @@
-﻿------------------------------------------------------------------------------------------
--- Clienten zonder eerste relatie / contactpersoon                                      --
---                                                                                      --
-------------------------------------------------------------------------------------------
+/*
+=================================================================================
+Titel       : Clienten zonder eerste relatie / contactpersoon
+Doel        : Snel signaleren van cliënten zonder contactpersoon van bepaald type
+Auteur      : Peter van Bussel (Laverhof)
+================================================================================
 
+Korte uitleg van de logica
+- Selecteert cliënten met een actieve zorgtoewijzing na @einddatum en met een hoofdlocatie.
+- Bepaald per cliënt de bijbehorende kostenplaats via de koppeling tusssen locaties en kostenplaatsen.
+- Selecteert vervolgens alleen die cliënten die verblijven op @costcentre verblijven én GEEN relatie hebben van het type @relation.
 
+Aandachtspunten
+- De relatiecontrole moet worden gebaserd op de relatietype vastgelegde in nexus_client_contact_relation_types. Dit verschilt per organisatie, afhankelijk van de inrichting van contactpersonen.
+- De query bevat organisatiespecifieke filters op kostenplaatsen (bijvoorbeeld numerieke reeksen). Pas deze filters aan op basis van de inrichting binnen de organisatie, of verwijder ze indien niet van toepassing.
 
-/*  
-    @einddatum  – cutoff date for active care allocations  
-    @ccFilter   – flexible filter for cost center identification numbers  
-                  Supports:
-                    ''                → no filtering  
-                    '2100'            → single number  
-                    '2100,2105,2110'  → list of numbers  
-                    '2000-2200'       → numeric range  
+ Er kan op kostenplaats, einddatum en relatietype worden gefilterd via flexibel filters (leeg, lijst of bereik). De query toont uitsluitend die cliënten die dan GEEN contactpersoon hebben op basis van de opgegeven criteria.  
+
+    @enddate     - cutoff date for active care allocations
+	              Supports:
+                  +  ''                → no filtering  
+                  +  '2025'            → single year  
+
+    @costcentre  – flexible filter for costcentre identification numbers  
+                   Supports:
+                   + ''                → no filtering  
+                   + '2100'            → single number  
+                   + '2100,2105,2110'  → list of numbers  
+                   + '2000-2200'       → numeric range  
+
+	@relation   – flexible filter for nexus_client_contact_relation_types
+				  Supports:
+			      + NULL               → no filter
+			      + ''                 → no filter
+			      + one value (e.g. '%Eerste%')
+			      + multiple values (comma-separated)
+			      + wildcards inside each value
 */
-DECLARE @einddatum varchar(250);
-DECLARE @ccFilter varchar(250) = '';   -- example value
+DECLARE @enddate varchar(250) = '2025';
+DECLARE @costcentre varchar(250) = '1000-3000';
+DECLARE @relation varchar (250) = '%eerste%,%tweede%'; --null; --'%Wettelijk%'; --
 
 
 /*  
@@ -26,12 +49,12 @@ DECLARE @ccFilter varchar(250) = '';   -- example value
 WITH table_alle AS
 (
     SELECT
-        ca.clientObjectId AS ca_clientObjectId,
-        c.identificationNo AS c_nummer,
-        c.name AS c_name,
-        cc.identificationNo AS cc_identificationNo,
-        cc.name AS cc_name
-    FROM care_allocations ca
+        ca.clientObjectId      AS clientId,
+        c.identificationNo     AS clientNo,
+        c.name                 AS clientName,
+        cc.identificationNo    AS costcentreNo,
+        cc.name                AS costcentreName
+    FROM care_allocations as ca
     LEFT JOIN clients c
         ON c.objectId = ca.clientObjectId
     LEFT JOIN location_assignments la
@@ -42,14 +65,11 @@ WITH table_alle AS
         ON cc.objectId = cca.costcenterObjectid
     WHERE 
         /* Active care allocation */
-        (ca.dateEnd > @einddatum OR ca.dateEnd IS NULL)
+        (ca.dateEnd > @enddate OR ca.dateEnd IS NULL)
 
         /* Only MAIN location assignments */
         AND la.locationType = 'MAIN'
         AND la.endDate IS NULL
-
-        /* Only cost centers in the 2000–2999 range */
-        AND TRY_CAST(cc.identificationNo AS INT) BETWEEN 2000 AND 2999
 
         /*  
             Flexible filtering for cc.identificationNo  
@@ -58,27 +78,26 @@ WITH table_alle AS
             - range → PARSENAME trick  
         */
         AND (
-                @ccFilter IS NULL
-                OR @ccFilter = ''
+                @costcentre IS NULL
+                OR @costcentre = ''
 
                 /* List of numbers (no dash present) */
                 OR (
-                    @ccFilter NOT LIKE '%-%'
+                    @costcentre NOT LIKE '%-%'
                     AND cc.identificationNo IN (
-                        SELECT value FROM STRING_SPLIT(@ccFilter, ',')
+                        SELECT value FROM STRING_SPLIT(@costcentre, ',')
                     )
                 )
 
                 /* Range X-Y */
                 OR (
-                    @ccFilter LIKE '%-%'
+                    @costcentre LIKE '%-%'
                     AND TRY_CAST(cc.identificationNo AS INT) BETWEEN
-                        TRY_CAST(PARSENAME(REPLACE(@ccFilter, '-', '.'), 2) AS INT)
-                        AND TRY_CAST(PARSENAME(REPLACE(@ccFilter, '-', '.'), 1) AS INT)
+                        TRY_CAST(PARSENAME(REPLACE(@costcentre, '-', '.'), 2) AS INT)
+                        AND TRY_CAST(PARSENAME(REPLACE(@costcentre, '-', '.'), 1) AS INT)
                 )
             )
 )
-
 
 /*  
     Final selection:  
@@ -86,24 +105,32 @@ WITH table_alle AS
     - Grouping ensures unique rows  
 */
 SELECT 
-    ta.ca_clientObjectId AS clientId,
-    ta.c_nummer AS clientNummer,
-    ta.c_name AS clientnaam,
-    ta.cc_identificationNo AS kostenplaats,
-    ta.cc_name AS afdeling
+    ta.clientId          AS clientId,
+    ta.clientNo          AS clientNo,
+    ta.clientName        AS clientname,
+    ta.costcentreNo      AS costcenterNo,
+    ta.costcentreName    AS costcentreName
 FROM table_alle ta
 WHERE NOT EXISTS (
     SELECT 1
     FROM relations r
-    INNER JOIN nexus_client_contact_relation_types nccrt
-        ON r.clientContactRelationTypeId = nccrt.objectId
-    WHERE r.clientObjectId = ta.ca_clientObjectId
-      AND nccrt.name = 'Eerste relatie / contactpersoon'
-)
+	INNER JOIN nexus_client_contact_relation_types AS nccrt 
+		ON r.clientContactRelationTypeId = nccrt.objectId 
+	WHERE r.clientObjectId = ta.clientId 
+	 AND ( 
+		 @relation IS NULL 
+		 OR @relation = '' 
+		 OR EXISTS ( 
+			SELECT 1 FROM STRING_SPLIT(@relation, ',') AS rel 
+			WHERE nccrt.name LIKE rel.value 
+			)
+		) 
+	)
+
 GROUP BY 
-    ta.ca_clientObjectId,
-    ta.c_nummer,
-    ta.c_name,
-    ta.cc_identificationNo,
-    ta.cc_name
-ORDER BY ta.ca_clientObjectId;
+    ta.clientId,
+    ta.clientNo,
+    ta.clientName,
+    ta.costcentreNo,
+    ta.costcentreName
+ORDER BY ta.clientId;
