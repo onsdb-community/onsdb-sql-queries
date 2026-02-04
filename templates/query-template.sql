@@ -1,14 +1,17 @@
 /*
 ===============================================================================
-Titel       : <korte, duidelijke titel>
-Doel        : <wat levert deze query op en waarom bestaat hij?>
-Auteur      : <naam>
+Titel       : korte, duidelijke titel
+Doel        : wat levert deze query op en waarom bestaat hij?
+Auteur      : naam (organisatie)
 ===============================================================================
 
 Korte uitleg van de logica
 - <bullet 1>
 - <bullet 2>
 - <bullet 3>
+
+Aandachtspunten
+- <bijvoorbeeld organisatiespecifieke filtering>
 
 */
 
