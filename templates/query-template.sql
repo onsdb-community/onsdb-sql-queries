@@ -10,6 +10,9 @@ Korte uitleg van de logica
 - <bullet 2>
 - <bullet 3>
 
+Aandachtspunten
+- <bijvoorbeeld organisatiespecifieke filtering>
+
 */
 
 
