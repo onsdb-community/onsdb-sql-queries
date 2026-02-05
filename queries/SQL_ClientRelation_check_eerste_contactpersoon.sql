@@ -8,7 +8,7 @@ Auteur      : Peter van Bussel (Laverhof)
 Korte uitleg van de logica
 - Selecteert cliënten met een actieve zorgtoewijzing na @einddatum en met een hoofdlocatie.
 - Bepaald per cliënt de bijbehorende kostenplaats via de koppeling tusssen locaties en kostenplaatsen.
-- Selecteert vervolgens alleen die cliënten die verblijven op @costcentre verblijven én GEEN relatie hebben van het type @relation.
+- Selecteert vervolgens alleen die cliënten die op @costcentre verblijven én GEEN relatie hebben van het type @relation.
 
 Aandachtspunten
 - De relatiecontrole moet worden gebaserd op de relatietype vastgelegde in nexus_client_contact_relation_types. Dit verschilt per organisatie, afhankelijk van de inrichting van contactpersonen.
@@ -134,3 +134,4 @@ GROUP BY
     ta.costcentreNo,
     ta.costcentreName
 ORDER BY ta.clientId;
+
