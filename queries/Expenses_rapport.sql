@@ -5,7 +5,7 @@
   Auteur: Peter van Bussel (Laverhof)
 =================================================================================
 
-Korte uitleg van de logica
+Korte uitleg van de logica 
    - De query haalt gegevens over onkostenvergoedingen van werknemers op voor een specifiek datumbereik.
    - Filtert deze op type op basis van flexibele trefwoordpatronen die door de gebruiker worden opgegeven. 
    - Aggregeert de totale gedeclareerde waarde per werknemer, per onkostentype en per kostenplaats.
