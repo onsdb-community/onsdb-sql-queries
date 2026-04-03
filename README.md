@@ -14,7 +14,7 @@ templates/      # Query-template voor nieuwe bijdragen
 
 ## Bijdragen
 
-Bijdragen zijn welkom 🎉
+Bijdragen zijn welkom 🎉 Heb je ook een query die je wilt toevoegen? Mail dan naar [c.vanson@odion.nl](c.vanson@odion.nl) om toegevoegd te worden als collaborator aan deze repository.
 
 Nieuwe queries en wijzigingen worden altijd gedaan via een Pull Request (PR). Dit zorgt ervoor dat wijzigingen even kunnen worden bekeken voordat ze worden toegevoegd, en voorkomt dat iemand per ongeluk iets kapot maakt.
 
